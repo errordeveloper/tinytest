@@ -1,0 +1,20 @@
+AVRTEST_PATH ?= ..
+
+all: tt-demo-avr.elf
+
+.c.o:
+	avr-gcc -DNO_FORKING -mmcu=atmega128 -Wall -g -O2 -c $<
+
+tinytest.o: tinytest.h
+
+portable_demo.o: tinytest_macros.h tinytest.h
+
+OBJS=tinytest.o portable_demo.o
+
+tt-demo-avr.elf: $(OBJS)
+	avr-gcc -O -mmcu=atmega128 -Wall $(OBJS) -o $@ $(AVRTEST_PATH)/exit-atmega128.o
+	$(AVRTEST_PATH)/avrtest $@
+
+clean:
+	rm -f *.o *~ tt-demo-avr.elf
+
