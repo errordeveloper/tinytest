@@ -1,0 +1,15 @@
+language: c
+compiler:
+  - clang
+  - gcc
+before_install:
+  - "sudo apt-get -qq update"
+  - "if [ ! $CC = 'clang' ]; then sudo apt-get -qq install gcc-avr avr-libc; fi"
+  - "if [ ! $CC = 'clang' ]; then
+        git clone https://github.com/embecosm/winavr;
+        make -C winavr/avrtest;
+        export AVRTEST_PATH=winavr/avrtest;
+     fi"
+script:
+  - "make && ./tt-demo"
+  - "if [ ! $CC = 'clang' ]; then make -f Makefile.avr clean all; fi"
