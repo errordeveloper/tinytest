@@ -4,6 +4,15 @@ compiler:
   - gcc
 before_install:
   - "sudo apt-get -qq update"
+  - "if [ ! $CC = 'clang' ]; then sudo apt-get -qq install qemu-system libc6:i386; fi"
+  - "if [ ! $CC = 'clang' ]; then
+        CS_TOOLCAHIN_URL='https://sourcery.mentor.com/public/gnu_toolchain/arm-none-eabi/arm-2013.05-23-arm-none-eabi-i686-pc-linux-gnu.tar.bz2';
+        curl $CS_TOOLCAHIN_URL | sudo tar xj -C /usr/;
+        export PATH=/usr/arm-2013.05/bin:$PATH;
+        arm-none-eabi-gcc --version;
+        file /usr/arm-2013.05/bin/*;
+        file /bin/ls;
+    fi"
   - "if [ ! $CC = 'clang' ]; then sudo apt-get -qq install gcc-avr avr-libc; fi"
   - "if [ ! $CC = 'clang' ]; then
         git clone https://github.com/embecosm/winavr;
@@ -13,3 +22,4 @@ before_install:
 script:
   - "make && ./tt-demo"
   - "if [ ! $CC = 'clang' ]; then make -f Makefile.avr clean all; fi"
+  - "if [ ! $CC = 'clang' ]; then make -f Makefile.arm-cortex-m3-qemu clean all; fi"
