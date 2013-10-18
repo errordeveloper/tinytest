@@ -1,0 +1,20 @@
+AVRTEST_PATH ?= ..
+
+all: tt-demo-arm-cortex-m3-qemu.elf
+
+.c.o:
+	arm-none-eabi-gcc -DNO_FORKING -mcpu=cortex-m3 -mthumb -T generic-hosted.ld -Wall -g -O2 -c $<
+
+tinytest.o: tinytest.h
+
+portable_demo.o: tinytest_macros.h tinytest.h
+
+OBJS=tinytest.o portable_demo.o
+
+tt-demo-arm-cortex-m3-qemu.elf: $(OBJS)
+	arm-none-eabi-gcc -O -g -mcpu=cortex-m3 -mthumb -T generic-hosted.ld -Wall $(OBJS) -o $@
+	qemu-system-arm -cpu cortex-m3 -nographic -monitor null -serial null -semihosting -kernel $@
+
+clean:
+	rm -f *.o *~ tt-demo-arm-cortex-m3-qemu.elf
+
